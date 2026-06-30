@@ -192,3 +192,21 @@ new_image= new_image.astype(np.uint8) # getting float -> convert to uint8
 cv2.imshow(
     "Lenna with decreased bright", new_image)
 cv2.waitKey(0)
+
+image_2 = cv2.imread(
+    "data/lesson1/cameraman.png",  # шлях до файлу
+    cv2.IMREAD_GRAYSCALE,   # прапорець як читати зображення(чорнобіле)
+)
+
+cv2.imshow(
+    "cameraman",
+    image_2
+)
+
+image_2 = cv2.equalizeHist(image_2)
+cv2.imshow(
+    "cameraman_1",
+    image_2
+)
+
+cv2.waitKey(0)
