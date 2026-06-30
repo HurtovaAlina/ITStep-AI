@@ -181,7 +181,7 @@ cv2.imshow(
     image
 )
 
-new_image = ((image/255)**1.5)*255
+new_image = ((image/255)**1.5)*255 #gamma correction changes every pixel
 new_image= new_image.astype(np.uint8) # getting float -> convert to uint8
 cv2.imshow(
     "Lenna with increased bright", new_image)
