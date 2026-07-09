@@ -85,6 +85,7 @@ import utils
 #
 # cv2.imshow("simple bin",  gray)
 #
+# method Otsu
 #
 #
 # # адаптивна бінарізація
