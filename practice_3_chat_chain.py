@@ -247,3 +247,154 @@ llm = ChatGoogleGenerativeAI(
 # основні навички, які необхідні
 #  Другий ланцюг отримує основні навички та опис
 # кандидата і генерує резюме
+
+# структура відповіді
+class Skills(BaseModel):
+    other_skills: list[str] = Field(description="перелік інших навичок")
+    english_level: str = Field(description="рівень англійської мови")
+    frameworks: list[str] = Field(description="фреймворки")
+    experience: int = Field(description="досвід в роках")
+    technologies: list[str] = Field(description="список технологій")
+    programming_language: str =Field(description="мова програмування")
+
+
+# створення парсер
+parser1 = PydanticOutputParser(pydantic_object=Skills)
+
+# інструкція від парсера
+instructions = parser1.get_format_instructions()
+
+# промпт
+prompt1 = PromptTemplate.from_template("""
+    Ти -- досвідчений рекрутер.
+    Твоя задача на підставі отриманої вакансії обрати основні навички, що потрібні для даної вакансії
+
+    ###ІНСТРУНКЦІЇ###
+    1. всі навички треба розподілити відповідно: фреймворки, тенології, тощо
+    2. якщо не знаєш куди віднести навичку, додавай її до інших навичок
+
+    ###ФОРМАТ ВІДПОВІДІ###
+    {format_instructions}
+
+    ###ВХІДНІ ДАНІ###
+    Вакансія: {position}
+""",
+partial_variables={"format_instructions": instructions}
+# оодразу передає інструкції від парсера
+)
+
+# ланцюг для першого кроку
+chain1 = prompt1 | llm | parser1
+
+# використання
+position = """We are looking for a passionate Data Scientist to implement AI solutions aimed at achieving business goals.
+
+This role offers the opportunity to work on cutting-edge AI adoption projects that helps to improve current business processes.
+You'll be a great fit if you have:
+Strong Python Experience (2 year +);
+Experience with LLM , Diffusion models;
+Knowledge of Prompt engineering;
+Experience with Gen AI-related technologies such as LangChain and RAG;
+Experience with Neural Networks (Optional) ;
+Experience with NLP , Predictive analytics and Machine learning;
+Experience with Pandas;
+Experience with SQL, including experience with large datasets;
+Strong experience in statistics;
+Bachelor's degree in Computer Science or a related field.
+What you'll do:
+Develop AI agents that utilize LLM, RAG and langchain approach;
+Implement LLM and Diffusion models to boost business productivity;
+Utilize LLM (LLM Vision) to improve object detection, text classification and extraction;
+Create forecasting, recommendation, and classification models;
+Transform business challenges to AI applications.
+
+We ensure your growth with:
+Competitive salary fixed in USD;
+Flexible working schedule and fully remote work format;
+Paid vacation days and sick leave days ;
+Personal and professional development opportunities;
+Participation in building innovative projects from scratch using modern technologies;
+Team-building activities and corporate events;
+English classes and educational events."""
+
+data = {
+    "position": position,
+}
+
+# запускаємо перший ланцюг
+
+response1 = chain1.invoke(data)
+
+print(f"Основні навички: "
+      f"Мова програмування {response1.programming_language}\n"
+      f"Технології {response1.technologies}\n"
+      f"Досвід {response1.experience} роки\n"
+      f"Фреймворки {response1.frameworks}\n"
+      f"Рівень англійської {response1.english_level}\n"
+      f"Інші навички {response1.other_skills}\n"
+      )
+
+# крок 2
+# згенерувати резюме
+
+class CV(BaseModel):
+    cv: str = Field(description="резюме")
+
+
+parser2 = PydanticOutputParser(pydantic_object=CV)
+
+instructions = parser2.get_format_instructions()
+
+# промпт
+
+prompt = PromptTemplate.from_template("""
+    Ти -- досвідчений помічник в складанні резюме.
+    Твоя задача на підставі опису кандидата і наданих навичок скласти цікаве резюме
+
+    ###ІНСТРУКЦІЇ###
+    1. крім навичок резюме має містити опис кандидата, мотиваційний зміст
+    2. вказати 3-5 софт скіллів
+
+    ###ФОРМАТ ВІДПОВІДІ###
+    {format_instructions}
+
+    ###ВХІДНІ ДАНІ###
+    опис кандидата: {applicant_description}
+    перелік інших навичок: {other_skills} 
+    рівень англійської мови: {english_level}
+    фреймворки: {frameworks}
+    досвід в роках: {experience}
+    список технологій:{technologies}
+    мова програмування: {programming_language}
+""",
+partial_variables={"format_instructions": instructions}
+)
+
+# ланцюг для кроку 2
+
+chain2 = prompt | llm | parser2
+
+# використання
+
+applicant_description = """Кандидат має 3 роки досвіду роботи з аналізом даних і машинним навчанням. 
+Володіє Python, SQL, Pandas, Scikit-learn та TensorFlow. Має досвід створення моделей 
+прогнозування, обробки великих обсягів даних і візуалізації результатів. 
+Шукає вакансію Data Scientist у міжнародній компанії."""
+
+
+# # дані для другого ланцюга
+data = {
+    "applicant_description" :applicant_description,
+    "programming_language": response1.programming_language,
+    "technologies": response1.technologies,
+    "experience": response1.experience,
+    "frameworks": response1.frameworks,
+    "english_level": response1.english_level,
+    "other_skills": response1.other_skills
+}
+
+# запускаємо другий ланцюг
+response2 = chain2.invoke(data)
+
+print(f"Резюме:")
+print(response2)
