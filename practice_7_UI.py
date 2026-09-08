@@ -29,14 +29,19 @@ llm = ChatGoogleGenerativeAI(
     api_key=api_key  # ключ до сервера з моделлю
 )
 
+# отримати повідомлення від користувача
+user_text = st.chat_input("Введіть повідомлення")
+person = st.text_input("Введіть відому людину")
+
 # # # історія повідомлень
 
 if "history" not in st.session_state:
     st.session_state.history = [
-        SystemMessage("""
-        Ти -- ввічливий чатбот, який симулює певну відому людину
+        SystemMessage(f"""
+        Ти -- ввічливий чатбот, який симулює певну відому людину {person}
         Користувач задає відому людину.
         Твоя задача підтримувати діалог з користувачем, симулюючи спілкування користувача з цією відомою людиною
+        {person}
 
         """)
     ]
@@ -45,8 +50,7 @@ if "history" not in st.session_state:
 # заголовок
 st.title("Наш чатбот")
 
-# отримати повідомлення від користувача
-user_text = st.chat_input("Введіть повідомлення")
+
 
 # якщо повідомлення не None тоді викликаємо чат бот
 if user_text is not None:
