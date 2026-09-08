@@ -30,61 +30,61 @@ llm = ChatGoogleGenerativeAI(
     api_key=api_key  # ключ до сервера з моделлю
 )
 
-# # отримати повідомлення від користувача
-#
-# person = st.text_input("Введіть відому людину")
-#
-# # # # історія повідомлень
-#
-# if "history" not in st.session_state and person:
-#     st.session_state.history = [
-#         SystemMessage(f"""
-#         Ти -- ввічливий чатбот, який симулює певну відому людину {person}
-#         Користувач задає відому людину.
-#         Твоя задача підтримувати діалог з користувачем, симулюючи спілкування користувача з цією відомою людиною
-#         {person}
-#
-#         """)
-#     ]
-#
-#
-# # заголовок
-# st.title("Наш чатбот")
-#
-# user_text = st.chat_input("Введіть повідомлення")
-#
-# # якщо повідомлення не None тоді викликаємо чат бот
-# if user_text is not None:
-#     # створити HumanMessage
-#     human_message = HumanMessage(content=user_text)
-#
-#     # отримати історію повідомлень
-#     messages = st.session_state.history
-#
-#     # додати повідемлення в історії
-#     messages.append(human_message)
-#
-#     # отримати відповідь моделі
-#     response = llm.invoke(messages)
-#
-#     # добавити response в історію спілкування
-#     messages.append(response)
-#
-#     # вивести всю історію повідомлень
-#     for message in messages:
-#         # не показувати SystemMessage
-#         if isinstance(message, SystemMessage):
-#             continue
-#
-#         # отримуємо тип повідомлення
-#         role = ""
-#         if isinstance(message, HumanMessage):
-#             role = "user"
-#         else:
-#             role = "AI"
-#
-#         with st.chat_message(role):  # добавляємо іконку до повідомлення
-#             st.markdown(message.text)
+# отримати повідомлення від користувача
+
+person = st.text_input("Введіть відому людину")
+
+# # # історія повідомлень
+
+if "history" not in st.session_state and person:
+    st.session_state.history = [
+        SystemMessage(f"""
+        Ти -- ввічливий чатбот, який симулює певну відому людину {person}
+        Користувач задає відому людину.
+        Твоя задача підтримувати діалог з користувачем, симулюючи спілкування користувача з цією відомою людиною
+        {person}
+
+        """)
+    ]
+
+
+# заголовок
+st.title("Наш чатбот")
+
+user_text = st.chat_input("Введіть повідомлення")
+
+# якщо повідомлення не None тоді викликаємо чат бот
+if user_text is not None:
+    # створити HumanMessage
+    human_message = HumanMessage(content=user_text)
+
+    # отримати історію повідомлень
+    messages = st.session_state.history
+
+    # додати повідемлення в історії
+    messages.append(human_message)
+
+    # отримати відповідь моделі
+    response = llm.invoke(messages)
+
+    # добавити response в історію спілкування
+    messages.append(response)
+
+    # вивести всю історію повідомлень
+    for message in messages:
+        # не показувати SystemMessage
+        if isinstance(message, SystemMessage):
+            continue
+
+        # отримуємо тип повідомлення
+        role = ""
+        if isinstance(message, HumanMessage):
+            role = "user"
+        else:
+            role = "AI"
+
+        with st.chat_message(role):  # добавляємо іконку до повідомлення
+            st.markdown(message.text)
 
 # Завдання 2
 # Напишіть додаток, який симулює проходження
