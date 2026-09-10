@@ -25,20 +25,6 @@ embedding = GoogleGenerativeAIEmbeddings(
     api_key=api_key,
 )
 
-# # переветення тексту у вектор
-# text1 = "Суп корисний при застуді"
-# vector1 = embedding.embed_query(text1)
-#
-# print(vector1)
-# print(type(vector1))
-# print(len(vector1))
-#
-# # текст 2
-# text2 = "Суп"
-# vector2 = embedding.embed_query(text2)
-#
-# print(vector2)
-
 # векторна база даних
 pc = Pinecone(api_key=pinecone_api_key)
 
